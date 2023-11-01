@@ -9,8 +9,8 @@ styles="blank lines grid dotted"
 for theme in $themes; do
   for orientation in $orientations; do
     for style in $styles; do
-      echo "FOO"
-      format=$format theme=$theme orientation=$orientation style=$style bash note-template-generator.sh
+      filename="template-$theme-$orientation-$style"
+      filename=$filename format=$format theme=$theme orientation=$orientation style=$style bash note-template-generator.sh
     done
   done
 done

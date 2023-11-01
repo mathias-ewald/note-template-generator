@@ -3,6 +3,7 @@
 ### CONFIGURATION START ###
 
 format="${format:-jpg}"
+filename=${filename:-template}
 
 dpi=300
 scaling_factor=$(echo "$dpi / 72" | bc -l)
@@ -42,9 +43,7 @@ if [ $theme == "dark" ]; then
   pattern_color=$theme_dark_pattern_color
 fi
 
-name="template-$theme-$orientation-$style"
-
-convert -size ${width}x${height} xc:$bg_color $name.$format
+convert -size ${width}x${height} xc:$bg_color $filename.$format
 
 if [ $style == "grid" ] || [ $style == "lines" ]; then
   draw_commands=""
@@ -58,7 +57,7 @@ if [ $style == "grid" ] || [ $style == "lines" ]; then
         draw_commands="${draw_commands} line $i,0 $i,$height"
     done
   fi
-  convert $name.$format -stroke $pattern_color -strokewidth $pattern_stroke_width -draw "$draw_commands" $name.$format
+  convert $filename.$format -stroke $pattern_color -strokewidth $pattern_stroke_width -draw "$draw_commands" $filename.$format
 fi 
 
 if [ $style == "dotted" ]; then
@@ -68,6 +67,6 @@ if [ $style == "dotted" ]; then
           draw_commands="${draw_commands} fill $pattern_color circle $j,$i $(($j+$dot_size)),$i"
       done
   done
-  convert $name.$format -fill "$pattern_color" -draw "$draw_commands" $name.$format
+  convert $filename.$format -fill "$pattern_color" -draw "$draw_commands" $filename.$format
 fi
 
