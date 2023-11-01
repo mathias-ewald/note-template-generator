@@ -4,11 +4,15 @@
 
 format="${format:-jpg}"
 
+dpi=300
+scaling_factor=$(echo "$dpi / 72" | bc -l)
+
 orientation="${orientation:-portrait}"
-portrait_width=595
-portrait_height=842
-landscape_width=842
-landscape_height=595
+portrait_width=$(echo "8.27 * $dpi" | bc | cut -d'.' -f1)
+portrait_height=$(echo "11.69 * $dpi" | bc | cut -d'.' -f1)
+landscape_width=$portrait_height
+landscape_height=$portrait_width
+
 
 theme="${theme:-light}"
 theme_light_bg_color="#FFFFFF"
@@ -17,8 +21,10 @@ theme_dark_bg_color="#1C1C1C"
 theme_dark_pattern_color="#636363"
 
 style="${style:-blank}"
-pattern_spacing=15
-dot_size=1
+pattern_spacing=$(echo "20 * $scaling_factor" | bc | cut -d'.' -f1)
+pattern_stroke_width=$(echo "1 * $scaling_factor" | bc | cut -d'.' -f1)
+dot_size=$(echo "1 * $scaling_factor" | bc | cut -d'.' -f1)
+
 
 ### CONFIGURATION END ###
 
@@ -41,16 +47,19 @@ name="template-$theme-$orientation-$style"
 convert -size ${width}x${height} xc:$bg_color $name.$format
 
 if [ $style == "grid" ] || [ $style == "lines" ]; then
+  draw_commands=""
+  # horizontal lines
   for ((i=$pattern_spacing; i<$height; i+=$pattern_spacing)); do
-      convert $name.$format -stroke $pattern_color -strokewidth 1 -draw "line 0,$i $width,$i" $name.$format
+      draw_commands="${draw_commands} line 0,$i $width,$i"
   done
+  # vertical lines
+  if [ $style == "grid" ]; then
+    for ((i=$pattern_spacing; i<$width; i+=$pattern_spacing)); do
+        draw_commands="${draw_commands} line $i,0 $i,$height"
+    done
+  fi
+  convert $name.$format -stroke $pattern_color -strokewidth $pattern_stroke_width -draw "$draw_commands" $name.$format
 fi 
-
-if [ $style == "grid" ]; then
-  for ((i=$pattern_spacing; i<$width; i+=$pattern_spacing)); do
-      convert $name.$format -stroke $pattern_color -strokewidth 1 -draw "line $i,0 $i,$height" $name.$format
-  done
-fi
 
 if [ $style == "dotted" ]; then
   draw_commands=""
