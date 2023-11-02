@@ -18,7 +18,7 @@ landscape_height=$portrait_width
 theme="${theme:-light}"
 theme_light_bg_color="#FFFFFF"
 theme_light_pattern_color="#EEEEEE"
-theme_dark_bg_color="#1C1C1C"
+theme_dark_bg_color="#000000"
 theme_dark_pattern_color="#636363"
 
 style="${style:-blank}"
